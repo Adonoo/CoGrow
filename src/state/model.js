@@ -16,6 +16,7 @@ export function createTodo(text) {
         text: text.trim(),
         done: false,
         weight: 1,
+        notes: "",
         subtasks: [],
     };
 }

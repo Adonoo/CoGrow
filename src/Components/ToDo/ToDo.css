@@ -1,0 +1,79 @@
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.todo-card-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.todo-delete {
+    margin-left: auto;
+}
+
+.todo-main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.todo-delete {
+    justify-self: flex-end;
+}
+
+.todo-add {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.todo-add .todo-add-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.todo-subtask-add {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+}
+
+.todo-subtask-add ul {
+    list-style-type: none;
+}
+
+.todo-subtask-add-check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  appearance: none;          /* native checkbox look weg */
+  border: 2px solid #111;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.todo-subtask-add-check:checked {
+  background: #00ace5;
+}
+
+/* Häkchen */
+.todo-subtask-add-check:checked::after {
+  content: "";
+  width: 5px;
+  height: 12px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(40deg);
+  margin-top: -3px;
+}
+
+
+
+

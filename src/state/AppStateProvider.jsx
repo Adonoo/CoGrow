@@ -2,14 +2,38 @@ import { useEffect, useMemo, useState } from "react";
 import { AppStateContext } from "./AppStateContext.jsx";
 import { loadState, saveState } from "./persist.js";
 import { createEvent, createTodo, createSubtask } from "./model.js";
+import { broadcastState, subscribeToState } from "./sync.js";
 
 export function AppStateProvider({ children }) {
   const [state, setState] = useState(() => loadState());
 
+  const isDisplay = window.location.pathname.startsWith("/display");
+
   // Persistenz: bei jeder State-Änderung speichern
   useEffect(() => {
-    saveState(state);
-  }, [state]);
+  if (isDisplay) return;
+  saveState(state);
+  }, [state, isDisplay]);
+
+  // Übertragung
+  useEffect(() => {
+  if (isDisplay) return;
+  broadcastState(state);
+  }, [state, isDisplay]);
+
+  // Subscribe Effect
+  useEffect(() => {
+  if (!isDisplay) return;
+
+  const unsubscribe = subscribeToState((incomingState) => {
+    setState(incomingState);
+  });
+
+  return unsubscribe;
+  }, [isDisplay]);
+
+
+
 
   const actions = useMemo(() => {
     return {
@@ -76,6 +100,22 @@ export function AppStateProvider({ children }) {
             }),
             }));
         },
+
+        setTodoNotes(eventId, todoId, notes) {
+        setState(prev => ({
+            ...prev,
+            events: prev.events.map(e => {
+            if (e.id !== eventId) return e;
+            return {
+                ...e,
+                todos: e.todos.map(td =>
+                td.id !== todoId ? td : { ...td, notes }
+                ),
+            };
+            }),
+        }));
+        },
+
 
         deleteTodo(eventId, todoId) {
         setState(prev => ({

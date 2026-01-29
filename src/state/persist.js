@@ -1,6 +1,6 @@
 import { createInitialState, STATE_VERSION } from "./initialState";
 
- const KEY = "cogrow_state_v1";
+ export const KEY = "cogrow_state_v1";
 
  export function saveState(state) {
     localStorage.setItem(KEY, JSON.stringify(state));
