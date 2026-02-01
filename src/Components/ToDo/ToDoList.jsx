@@ -1,17 +1,23 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useParams } from "react-router";
 import { useAppState } from "../../state/AppStateContext";
 import { TodoCard } from "./ToDoCard";
 
 export function ToDoList() {
   const { state, actions } = useAppState();
+  const { eventId } = useParams();
   const [todoText, setTodoText] = useState("");
 
+  // Optional but nice: keep your selectedEventId in sync with the URL
+  useEffect(() => {
+    if (eventId) actions.selectEvent(eventId);
+  }, [eventId]);
+
   const selected = useMemo(
-    () => state.events.find((e) => e.id === state.selectedEventId),
-    [state.events, state.selectedEventId]
+    () => state.events.find((e) => e.id === eventId),
+    [state.events, eventId]
   );
 
-  // Always safe: if no event is selected, todos is an empty array
   const todos = selected?.todos ?? [];
 
   return (
@@ -20,14 +26,15 @@ export function ToDoList() {
         <div className="todo-add">
           <div className="todo-select-title">Selected: {selected.title}</div>
 
-          {/* Todo create */}
           <div className="todo-add-controls">
             <input
+              className="text-input"
               value={todoText}
               onChange={(e) => setTodoText(e.target.value)}
               placeholder="New todo..."
             />
             <button
+              className="button"
               onClick={() => {
                 actions.addTodo(selected.id, todoText);
                 setTodoText("");
@@ -52,7 +59,7 @@ export function ToDoList() {
           )}
         </div>
       ) : (
-        <div className="todo-noselect">Select an event to manage todos.</div>
+        <div className="todo-noselect">Event not found.</div>
       )}
     </div>
   );

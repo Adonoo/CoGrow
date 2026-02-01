@@ -1,73 +1,107 @@
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./ToDo.css";
 
 export function TodoCard({ eventId, todo, actions }) {
-const [subText, setSubText] = useState("");
+  const [subText, setSubText] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const cardRef = useRef(null);
 
-return (
-    <div className="todo-card-container">
-        <div className="todo-main">
-            <input
-                className="todo-subtask-add-check"
-                type="checkbox"
-                checked={todo.done}
-                onChange={() => actions.toggleTodo(eventId, todo.id)}
-            />
-            <div>
-                <strong>{todo.text}</strong>
-                <span>(weight: {todo.weight})</span>
-            </div>
-            <button className="todo-delete" onClick={() => actions.deleteTodo(eventId, todo.id)}>
-            Delete Todo
-            </button>
-        </div>
+  // Close when clicking outside
+  useEffect(() => {
+    if (!expanded) return;
 
-        <div className="todo-subtask-add">
+    function handlePointerDown(e) {
+      const cardEl = cardRef.current;
+      if (!cardEl) return;
+
+      // If click is outside the card -> collapse
+      if (!cardEl.contains(e.target)) {
+        setExpanded(false);
+      }
+    }
+
+    // Use pointerdown/mousedown so it feels instant
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [expanded]);
+
+  return (
+    <div
+      ref={cardRef}
+      className={`todo-card-container ${expanded ? "is-expanded" : ""}`}
+      onClick={() => setExpanded(true)}   // only expand (no toggle)
+    >
+      <div className="todo-main">
+        <input
+          className="todo-subtask-add-check"
+          type="checkbox"
+          checked={todo.done}
+          onChange={() => actions.toggleTodo(eventId, todo.id)}
+        />
+        <div className="todo-title">{todo.text}</div>
+        <button
+          className="todo-delete button"
+          onClick={() => actions.deleteTodo(eventId, todo.id)}
+        >
+          Delete Todo
+        </button>
+      </div>
+
+      {expanded && (
+        <>
+          <div className="todo-subtask-add">
             <input
-                value={subText}
-                onChange={(e) => setSubText(e.target.value)}
-                placeholder="New subtask..."
+              value={subText}
+              onChange={(e) => setSubText(e.target.value)}
+              placeholder="New subtask..."
             />
             <button
-            onClick={() => {
+            className="button"
+              onClick={() => {
                 actions.addSubtask(eventId, todo.id, subText);
                 setSubText("");
-            }}
+              }}
             >
-            Add Subtask
+              Add Subtask
             </button>
-        </div>
+          </div>
 
-        <div className="todo-notes">
+          <div className="todo-notes">
             <textarea
-                value={todo.notes ?? ""}
-                onChange={(e) => actions.setTodoNotes(eventId, todo.id, e.target.value)}
-                placeholder="Notes..."
-                rows={3}
+              value={todo.notes ?? ""}
+              onChange={(e) =>
+                actions.setTodoNotes(eventId, todo.id, e.target.value)
+              }
+              placeholder="Notes..."
+              rows={3}
             />
-        </div>
+          </div>
 
-        <div className="subtasks">
-        {todo.subtasks.length > 0 && (
-            <ul>
-            {todo.subtasks.map(st => (
+          {todo.subtasks.length > 0 && (
+            <ul className="subtask-list">
+              {todo.subtasks.map((st) => (
                 <li key={st.id}>
-                <input
+                  <input
                     type="checkbox"
                     checked={st.done}
-                    onChange={() => actions.toggleSubtask(eventId, todo.id, st.id)}
-                />
-                <div>{st.text}</div>
-                <button
-                    onClick={() => actions.deleteSubtask(eventId, todo.id, st.id)}
-                >
+                    onChange={() =>
+                      actions.toggleSubtask(eventId, todo.id, st.id)
+                    }
+                  />
+                  <div>{st.text}</div>
+                  <button
+                    onClick={() =>
+                      actions.deleteSubtask(eventId, todo.id, st.id)
+                    }
+                  >
                     Delete
-                </button>
+                  </button>
                 </li>
-            ))}
+              ))}
             </ul>
-        )}
-        </div>
+          )}
+        </>
+      )}
     </div>
-);
+  );
 }

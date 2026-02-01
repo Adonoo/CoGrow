@@ -1,0 +1,41 @@
+.navbar-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  /* optional: background so it’s readable */
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+.navbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 5vh;
+}
+
+.nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-icon img {
+    width: 30px;
+    height: auto;
+}
+
+.nav-icon.is-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

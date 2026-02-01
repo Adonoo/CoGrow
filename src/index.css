@@ -1,0 +1,54 @@
+:root {
+    --base-color: #003e6e;
+    --interaction-color: #00ace5;
+    --white: #fff;
+    font-family: NeoSansM;
+}
+
+h1, h2, h3, h4 {
+    color: var(--base-color)
+}
+
+@font-face {
+    font-family: NeoSansM;
+    src: url('./assets/Fonts/neosansmedium.ttf')
+}
+
+@font-face {
+    font-family: GestaM;
+    src: url('./assets/Fonts/gestamedium.otf')
+}
+
+.container {
+  max-width: 70vw;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.button {
+    font-family: NeoSansM;
+    display: inline-block;
+    font-size: 1rem;
+    line-height: 1;
+    padding: .75rem 1rem;
+    border-radius: .5rem;
+    background: var(--interaction-color);
+    border: none;
+    color: var(--white);
+    transition: all 200ms ease-in-out;
+}
+
+.button:hover {
+    background: var(--white);
+    color: var(--interaction-color);
+}
+
+.text-input {
+    font-family: NeoSansM;
+    border-radius:.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    line-height: 0.5;
+    background: #f2f2f4;
+    border: 1px solid #e5e5e5;
+}

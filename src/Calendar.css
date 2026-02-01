@@ -1,0 +1,45 @@
+.todo-notodos {
+    text-align: center;
+}
+
+.calendar-container {
+    display: flex;
+    gap: 16px; 
+    align-items: flex-start;
+    flex-direction: row;
+}
+
+.calendar-calendar {
+    flex: 60%;
+}
+
+.calendar-events {
+    flex: 40%;
+}
+
+.calendar-eventcards {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.calendar-events .event-add-controls {
+    margin-top: 3vh;
+    justify-content: space-between;
+}
+
+.calendar-events .event-add-controls input {
+    flex: 1;
+}
+
+.calendar-eventlist {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.calendar-eventlist li {
+    background: var(--base-color);
+    color: var(--white);
+    padding: 10px;
+}

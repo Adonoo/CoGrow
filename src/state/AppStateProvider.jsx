@@ -11,189 +11,185 @@ export function AppStateProvider({ children }) {
 
   // Persistenz: bei jeder State-Änderung speichern
   useEffect(() => {
-  if (isDisplay) return;
-  saveState(state);
+    if (isDisplay) return;
+    saveState(state);
   }, [state, isDisplay]);
 
   // Übertragung
   useEffect(() => {
-  if (isDisplay) return;
-  broadcastState(state);
+    if (isDisplay) return;
+    broadcastState(state);
   }, [state, isDisplay]);
 
   // Subscribe Effect
   useEffect(() => {
-  if (!isDisplay) return;
+    if (!isDisplay) return;
 
-  const unsubscribe = subscribeToState((incomingState) => {
-    setState(incomingState);
-  });
+    const unsubscribe = subscribeToState((incomingState) => {
+      setState(incomingState);
+    });
 
-  return unsubscribe;
+    return unsubscribe;
   }, [isDisplay]);
-
-
-
 
   const actions = useMemo(() => {
     return {
-        addEvent(title, dateTimeISO) {
-            const t = title.trim();
-            if (!t) return;
+      addEvent(title, day) {
+        const t = title.trim();
+        if (!t) return;
+        if (!day) return; // require a selected day: "YYYY-MM-DD"
 
-            const event = createEvent(t, dateTimeISO);
+        const event = createEvent(t, day);
 
-            setState(prev => ({
+        setState((prev) => ({
+          ...prev,
+          selectedEventId: event.id,
+          events: [...prev.events, event],
+        }));
+      },
+
+      selectEvent(eventId) {
+        setState((prev) => ({ ...prev, selectedEventId: eventId }));
+      },
+
+      deleteEvent(eventId) {
+        setState((prev) => {
+          const remaining = prev.events.filter((e) => e.id !== eventId);
+
+          // selectedEventId sinnvoll nachziehen
+          const nextSelected =
+            prev.selectedEventId === eventId
+              ? remaining[0]?.id ?? null
+              : prev.selectedEventId;
+
+          return {
             ...prev,
-            selectedEventId: event.id,
-            events: [...prev.events, event],
-            }));
-        },
+            events: remaining,
+            selectedEventId: nextSelected,
+          };
+        });
+      },
 
-        selectEvent(eventId) {
-            setState(prev => ({ ...prev, selectedEventId: eventId }));
-        },
+      addTodo(eventId, text) {
+        const t = text.trim();
+        if (!t) return;
 
-        deleteEvent(eventId) {
-            setState(prev => {
-                const remaining = prev.events.filter(e => e.id !== eventId);
+        const todo = createTodo(t);
 
-                // selectedEventId sinnvoll nachziehen
-                const nextSelected =
-                prev.selectedEventId === eventId
-                    ? (remaining[0]?.id ?? null)
-                    : prev.selectedEventId;
+        setState((prev) => ({
+          ...prev,
+          events: prev.events.map((e) =>
+            e.id !== eventId ? e : { ...e, todos: [...e.todos, todo] }
+          ),
+        }));
+      },
 
-                return {
-                ...prev,
-                events: remaining,
-                selectedEventId: nextSelected,
-                };
-            });
-        },
-
-        addTodo(eventId, text) {
-            const t = text.trim();
-            if (!t) return;
-
-            const todo = createTodo(t);
-
-            setState(prev => ({
-            ...prev,
-            events: prev.events.map(e =>
-                e.id !== eventId ? e : { ...e, todos: [...e.todos, todo] }
-            ),
-            }));
-        },
-
-        toggleTodo(eventId, todoId) {
-            setState(prev => ({
-            ...prev,
-            events: prev.events.map(e => {
-                if (e.id !== eventId) return e;
-                return {
-                ...e,
-                todos: e.todos.map(td =>
-                    td.id !== todoId ? td : { ...td, done: !td.done }
-                ),
-                };
-            }),
-            }));
-        },
-
-        setTodoNotes(eventId, todoId, notes) {
-        setState(prev => ({
-            ...prev,
-            events: prev.events.map(e => {
+      toggleTodo(eventId, todoId) {
+        setState((prev) => ({
+          ...prev,
+          events: prev.events.map((e) => {
             if (e.id !== eventId) return e;
             return {
-                ...e,
-                todos: e.todos.map(td =>
+              ...e,
+              todos: e.todos.map((td) =>
+                td.id !== todoId ? td : { ...td, done: !td.done }
+              ),
+            };
+          }),
+        }));
+      },
+
+      setTodoNotes(eventId, todoId, notes) {
+        setState((prev) => ({
+          ...prev,
+          events: prev.events.map((e) => {
+            if (e.id !== eventId) return e;
+            return {
+              ...e,
+              todos: e.todos.map((td) =>
                 td.id !== todoId ? td : { ...td, notes }
-                ),
+              ),
             };
-            }),
+          }),
         }));
-        },
+      },
 
-
-        deleteTodo(eventId, todoId) {
-        setState(prev => ({
-            ...prev,
-            events: prev.events.map(e => {
+      deleteTodo(eventId, todoId) {
+        setState((prev) => ({
+          ...prev,
+          events: prev.events.map((e) => {
             if (e.id !== eventId) return e;
             return {
-                ...e,
-                todos: e.todos.filter(td => td.id !== todoId),
+              ...e,
+              todos: e.todos.filter((td) => td.id !== todoId),
             };
-            }),
+          }),
         }));
-        },
+      },
 
+      addSubtask(eventId, todoId, text) {
+        const t = text.trim();
+        if (!t) return;
 
-        addSubtask(eventId, todoId, text) {
-            const t = text.trim();
-            if (!t) return;
+        const sub = createSubtask(t);
 
-            const sub = createSubtask(t);
+        setState((prev) => ({
+          ...prev,
+          events: prev.events.map((e) => {
+            if (e.id !== eventId) return e;
+            return {
+              ...e,
+              todos: e.todos.map((td) =>
+                td.id !== todoId
+                  ? td
+                  : { ...td, subtasks: [...td.subtasks, sub] }
+              ),
+            };
+          }),
+        }));
+      },
 
-            setState(prev => ({
-            ...prev,
-            events: prev.events.map(e => {
-                if (e.id !== eventId) return e;
+      toggleSubtask(eventId, todoId, subtaskId) {
+        setState((prev) => ({
+          ...prev,
+          events: prev.events.map((e) => {
+            if (e.id !== eventId) return e;
+            return {
+              ...e,
+              todos: e.todos.map((td) => {
+                if (td.id !== todoId) return td;
                 return {
-                ...e,
-                todos: e.todos.map(td =>
-                    td.id !== todoId
-                    ? td
-                    : { ...td, subtasks: [...td.subtasks, sub] }
-                ),
+                  ...td,
+                  subtasks: td.subtasks.map((st) =>
+                    st.id !== subtaskId ? st : { ...st, done: !st.done }
+                  ),
                 };
-            }),
-            }));
-        },
+              }),
+            };
+          }),
+        }));
+      },
 
-        toggleSubtask(eventId, todoId, subtaskId) {
-            setState(prev => ({
-            ...prev,
-            events: prev.events.map(e => {
-                if (e.id !== eventId) return e;
+      deleteSubtask(eventId, todoId, subtaskId) {
+        setState((prev) => ({
+          ...prev,
+          events: prev.events.map((e) => {
+            if (e.id !== eventId) return e;
+            return {
+              ...e,
+              todos: e.todos.map((td) => {
+                if (td.id !== todoId) return td;
                 return {
-                ...e,
-                todos: e.todos.map(td => {
-                    if (td.id !== todoId) return td;
-                    return {
-                    ...td,
-                    subtasks: td.subtasks.map(st =>
-                        st.id !== subtaskId ? st : { ...st, done: !st.done }
-                    ),
-                    };
-                }),
+                  ...td,
+                  subtasks: td.subtasks.filter((st) => st.id !== subtaskId),
                 };
-            }),
-            }));
-        },
-
-        deleteSubtask(eventId, todoId, subtaskId) {
-            setState(prev => ({
-                ...prev,
-                events: prev.events.map(e => {
-                if (e.id !== eventId) return e;
-                return {
-                    ...e,
-                    todos: e.todos.map(td => {
-                    if (td.id !== todoId) return td;
-                    return {
-                        ...td,
-                        subtasks: td.subtasks.filter(st => st.id !== subtaskId),
-                    };
-                    }),
-                };
-                }),
-            }));
-            },
-        };
-    }, []);
+              }),
+            };
+          }),
+        }));
+      },
+    };
+  }, []);
 
   return (
     <AppStateContext.Provider value={{ state, actions }}>

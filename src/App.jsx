@@ -1,62 +1,59 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { NavLink, useNavigate } from "react-router";
 import { useAppState } from "./state/AppStateContext.jsx";
-import { ToDoList } from "./Components/ToDo/ToDoList.jsx";
+import "./App.css";
+
+function formatDayDE(dayStr) {
+  if (!dayStr) return "";
+  const [y, m, d] = dayStr.split("-").map(Number);
+  return `${d}.${m}.${y}`;
+}
 
 export default function App() {
   const { state, actions } = useAppState();
+  const navigate = useNavigate();
 
-  const [eventTitle, setEventTitle] = useState("Test Event");
+  const nextEvent = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
 
-  const selected = useMemo(
-    () => state.events.find(e => e.id === state.selectedEventId),
-    [state.events, state.selectedEventId]
-  );
+    const upcoming = state.events
+      .filter((e) => e.day >= today)
+      .sort((a, b) => {
+        if (a.day !== b.day) return a.day.localeCompare(b.day);
+        return a.title.localeCompare(b.title);
+      });
+
+    return upcoming[0] ?? null;
+  }, [state.events]);
 
   return (
-    <div style={{ padding: 16, fontFamily: "sans-serif" }}>
-      <h2>Quick Control UI (Test)</h2>
-
-      {/* Event create */}
-      <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-        <input
-          value={eventTitle}
-          onChange={(e) => setEventTitle(e.target.value)}
-          placeholder="Event title"
-        />
-        <button
-          onClick={() =>
-            actions.addEvent(eventTitle, new Date().toISOString())
-          }
-        >
-          Add Event (now)
-        </button>
-      </div>
-
-      {/* Event list + select */}
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontWeight: 600 }}>Events</div>
-        {state.events.length === 0 && <div>No events yet.</div>}
-
-        {state.events.map(e => (
-          <div key={e.id} style={{ display: "flex", gap: 8, marginTop: 6 }}>
-            <button onClick={() => actions.selectEvent(e.id)}>
-              {state.selectedEventId === e.id ? "Selected" : "Select"}
-            </button>
-            <div style={{ flex: 1 }}>
-              {e.title} <span style={{ opacity: 0.7 }}>({e.dateTime})</span>
-            </div>
-            <button onClick={() => actions.deleteEvent(e.id)}>Delete</button>
+    <div className="home-container">
+      <div className="home-nextevent">
+        {nextEvent ? (
+          <div
+            className="home-nextevent-card"
+            onClick={() => {
+              actions.selectEvent(nextEvent.id);
+              navigate(`/events/${nextEvent.id}`);
+            }}
+          >
+            <div className="home-nextevent-title">Next event</div>
+            <div className="home-nextevent-name">{nextEvent.title}</div>
+            <div className="home-nextevent-date">{formatDayDE(nextEvent.day)}</div>
           </div>
-        ))}
+        ) : (
+          <div style={{ opacity: 0.7 }}>No upcoming events.</div>
+        )}
       </div>
 
-      <ToDoList />
-      
-      {/* Debug */}
-      <details style={{ marginTop: 16 }}>
-        <summary>Debug JSON</summary>
-        <pre>{JSON.stringify(state, null, 2)}</pre>
-      </details>
+      <div className="home-other">
+        <NavLink to="/calendar" className="home-other-1">
+          Kalender
+        </NavLink>
+        <NavLink to="/control" className="home-other-2">
+          Eventübersicht
+        </NavLink>
+      </div>
     </div>
   );
 }
