@@ -6,6 +6,7 @@ import { Display } from "../Display";
 import { ToDoList } from "../Components/ToDo/ToDoList";
 import { DebugJSON } from "../JSON";
 import { Calendar } from "../Calendar";
+import { Plant } from "../Components/Plant/Plant";
 
 export function ProjectRoutes() {
     return (
@@ -16,6 +17,7 @@ export function ProjectRoutes() {
             <Route path="/display" element={<Display />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/json" element={<DebugJSON />} />
+            <Route path="/plant" element={<Plant />} />
         </Routes>
     )
 }
