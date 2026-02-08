@@ -1,0 +1,15 @@
+.stageSlider {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 5vh;
+}
+
+.stageSlider__range {
+    width: 100%;
+}
+
+.stageSlider__meta {
+  opacity: 0.75;
+  font-size: 12px;
+}

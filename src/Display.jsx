@@ -1,96 +1,100 @@
 import { useMemo } from "react";
 import { useAppState } from "./state/AppStateContext.jsx";
 import { getTodoProgress } from "./state/selectors.js";
+import "./Display.css";
+
+import stage0 from "./assets/stages/pflanze1.svg";
+import stage1 from "./assets/stages/pflanze2.svg";
+import stage2 from "./assets/stages/pflanze3.svg";
+import stage3 from "./assets/stages/pflanze4.svg";
+import stage4 from "./assets/stages/pflanze5.svg";
+
+const STAGES = [
+  { label: "Seed", img: stage0 },
+  { label: "Sprout", img: stage1 },
+  { label: "Stem", img: stage2 },
+  { label: "Leaves", img: stage3 },
+  { label: "Bloom", img: stage4 },
+];
 
 export function Display() {
   const { state } = useAppState();
 
-  const selected = useMemo(
-    () => state.events.find(e => e.id === state.selectedEventId),
-    [state.events, state.selectedEventId]
-  );
+  const stageIndex = clampInt(state.stageIndex ?? 0, 0, STAGES.length - 1);
+  const selectedEventId = state.selectedEventId;
+
+  const events = useMemo(() => {
+    return (state.events ?? []).map((e) => ({
+      ...e,
+      bud: e.bud ?? { x: Math.random(), y: Math.random(), style: "default" },
+      todos: Array.isArray(e.todos) ? e.todos : [],
+    }));
+  }, [state.events]);
+
+  const plantSrc = STAGES[stageIndex].img;
 
   return (
-    <div style={{ padding: 24, fontFamily: "sans-serif" }}>
-      <h2>Display</h2>
+    <div className="display">
+      <div className="display__canvas">
+        {/* KEY: frame sizes to the image; buds overlay matches this frame */}
+        <div className="display__frame">
+          <img
+            className="display__plant"
+            src={plantSrc}
+            alt={STAGES[stageIndex].label}
+          />
 
-      {!selected ? (
-        <div style={{ opacity: 0.7 }}>No event selected.</div>
-      ) : (
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ fontWeight: 700, marginBottom: 8 }}>
-            Selected: {selected.title}
+          <div className="display__buds">
+            {events.map((event) => (
+              <Bud
+                key={event.id}
+                event={event}
+                isSelected={event.id === selectedEventId}
+              />
+            ))}
           </div>
-          <EventProgressRow event={selected} isSelected />
         </div>
-      )}
-
-      <h3 style={{ marginTop: 16 }}>All Events</h3>
-      {state.events.length === 0 ? (
-        <div style={{ opacity: 0.7 }}>No events yet.</div>
-      ) : (
-        <div style={{ display: "grid", gap: 12 }}>
-          {state.events.map(event => (
-            <EventProgressRow
-              key={event.id}
-              event={event}
-              isSelected={event.id === state.selectedEventId}
-            />
-          ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 }
 
-function EventProgressRow({ event, isSelected }) {
-  const progress = getTodoProgress(event);
+function Bud({ event, isSelected }) {
+  const progress = clamp01(getTodoProgress(event));
   const percent = Math.round(progress * 100);
 
+  const xPct = clamp01(event.bud?.x ?? 0.5) * 100;
+  const yPct = clamp01(event.bud?.y ?? 0.5) * 100;
+
+  const minSize = 12;
+  const maxSize = 56;
+  const size = minSize + (maxSize - minSize) * progress;
+
+  const styleVars = {
+    "--x": `${xPct}%`,
+    "--y": `${yPct}%`,
+    "--size": `${size}px`,
+  };
+
   return (
     <div
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: 10,
-        padding: 12,
-        background: isSelected ? "rgba(0,0,0,0.04)" : "white",
-      }}
+      className={`bud ${isSelected ? "bud--selected" : ""}`}
+      style={styleVars}
+      title={`${event.title} – ${percent}%`}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
-        <div style={{ fontWeight: 600 }}>{event.title}</div>
-        <div style={{ opacity: 0.7 }}>{percent}%</div>
-      </div>
-
-      <ProgressBar value={progress} />
-
-      <div style={{ marginTop: 6, opacity: 0.7, fontSize: 12 }}>
-        {event.todos.filter(t => t.done).length}/{event.todos.length} todos done
-      </div>
+      <div className="bud__fill" />
     </div>
   );
 }
 
-function ProgressBar({ value }) {
-  const v = Math.max(0, Math.min(1, value));
+function clamp01(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return 0;
+  return Math.max(0, Math.min(1, v));
+}
 
-  return (
-    <div
-      style={{
-        height: 12,
-        borderRadius: 999,
-        background: "#eee",
-        overflow: "hidden",
-        marginTop: 8,
-      }}
-    >
-      <div
-        style={{
-          height: "100%",
-          width: `${v * 100}%`,
-          background: "#111",
-          transition: "width 150ms ease",
-        }}
-      />
-    </div>
-  );
+function clampInt(n, min, max) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) return min;
+  return Math.max(min, Math.min(max, Math.round(v)));
 }

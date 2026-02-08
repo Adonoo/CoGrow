@@ -5,6 +5,11 @@
     font-family: NeoSansM;
 }
 
+body {
+    margin: 0;
+    padding: 0;
+}
+
 h1, h2, h3, h4 {
     color: var(--base-color)
 }
@@ -18,6 +23,14 @@ h1, h2, h3, h4 {
     font-family: GestaM;
     src: url('./assets/Fonts/gestamedium.otf')
 }
+
+.display-shell {
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
 
 .container {
   max-width: 70vw;

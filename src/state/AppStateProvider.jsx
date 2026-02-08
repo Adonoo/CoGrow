@@ -34,6 +34,28 @@ export function AppStateProvider({ children }) {
 
   const actions = useMemo(() => {
     return {
+      setStageIndex(nextIndex) {
+        const n = Number(nextIndex);
+        if (!Number.isFinite(n)) return;
+
+        setState((prev) => ({
+          ...prev,
+          stageIndex: n,
+        }));
+      },
+
+      setBudPosition(eventId, x, y) {
+        setState((prev) => ({
+          ...prev,
+          events: prev.events.map((e) =>
+            e.id !== eventId
+              ? e
+              : { ...e, bud: { ...(e.bud ?? {}), x, y } }
+          ),
+        }));
+      },
+
+
       addEvent(title, day) {
         const t = title.trim();
         if (!t) return;

@@ -1,4 +1,4 @@
-import { createInitialState, STATE_VERSION } from "./initialState";
+import { createInitialState } from "./initialState";
 
  export const KEY = "cogrow_state_v1";
 

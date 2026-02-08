@@ -55,16 +55,24 @@ export function EventCard({ event, selectedEventId, actions }) {
       onClick={() => setExpanded(true)}
     >
       <div className="event-main">
-        <button
-          className="button"
-          onClick={(e) => {
-            e.stopPropagation();
+      <button
+        className="button"
+        onClick={(e) => {
+          e.stopPropagation();
+
+          if (!isSelected) {
             actions.selectEvent(event.id);
-            navigate(`/events/${event.id}`);
-          }}
-        >
-          {isSelected ? "Open" : "Select"}
-        </button>
+            // do NOT navigate yet
+            return;
+          }
+
+          // already selected → now allow opening todos
+          navigate(`/events/${event.id}`);
+        }}
+      >
+        {isSelected ? "Open" : "Select"}
+      </button>
+
 
         <div className="event-title">
           {event.title} 

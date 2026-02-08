@@ -16,7 +16,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2vh;
     background: var(--base-color);
     padding: 10px;
     width: 60%;
@@ -38,6 +38,11 @@
     flex-direction: row;
     align-items: center;
     gap: 5px;
+}
+
+.todo-card-container.is-expanded .todo-main {
+  border-bottom: 1px solid var(--white);
+  padding-bottom: 1vh;
 }
 
 .todo-delete {
@@ -66,11 +71,14 @@
 .todo-subtask-add {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     gap: 3px;
 }
 
 .subtask-list {
     list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
 .subtask-list li {
@@ -78,6 +86,7 @@
     flex-direction: row;
     align-items: center;
     gap: 10px;
+    color: var(--white);
 }
 
 .todo-subtask-add-check {
@@ -108,4 +117,9 @@
 
 .todo-title {
     color: var(--white);
+}
+
+.todo-notes {
+    border-bottom: 1px solid var(--white);
+    padding-bottom: 1vh;
 }

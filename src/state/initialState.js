@@ -5,6 +5,7 @@ export function createInitialState() {
         version: STATE_VERSION,
         currentTime: new Date().toISOString(),
         selectedEventId: null,
+        stageIndex: 0,
         events: [],
     };
 }

@@ -49,6 +49,17 @@ export function TodoCard({ eventId, todo, actions }) {
 
       {expanded && (
         <>
+          <div className="todo-notes">
+            <textarea
+              value={todo.notes ?? ""}
+              onChange={(e) =>
+                actions.setTodoNotes(eventId, todo.id, e.target.value)
+              }
+              placeholder="Notes..."
+              rows={6}
+            />
+          </div>
+
           <div className="todo-subtask-add">
             <input
               value={subText}
@@ -66,17 +77,6 @@ export function TodoCard({ eventId, todo, actions }) {
             </button>
           </div>
 
-          <div className="todo-notes">
-            <textarea
-              value={todo.notes ?? ""}
-              onChange={(e) =>
-                actions.setTodoNotes(eventId, todo.id, e.target.value)
-              }
-              placeholder="Notes..."
-              rows={3}
-            />
-          </div>
-
           {todo.subtasks.length > 0 && (
             <ul className="subtask-list">
               {todo.subtasks.map((st) => (
@@ -90,6 +90,7 @@ export function TodoCard({ eventId, todo, actions }) {
                   />
                   <div>{st.text}</div>
                   <button
+                  className="button"
                     onClick={() =>
                       actions.deleteSubtask(eventId, todo.id, st.id)
                     }
