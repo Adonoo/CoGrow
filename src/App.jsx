@@ -27,9 +27,15 @@ export default function App() {
   }, [state.events]);
 
   return (
+    <>
+    <div className="plan-event">
+      Plant euer nächstes Event
+      und wachst zusammen!
+    </div>
     <div className="home-container">
       <div className="home-nextevent">
         {nextEvent ? (
+          <>
           <div
             className="home-nextevent-card"
             onClick={() => {
@@ -37,10 +43,13 @@ export default function App() {
               navigate(`/events/${nextEvent.id}`);
             }}
           >
-            <div className="home-nextevent-title">Next event</div>
-            <div className="home-nextevent-name">{nextEvent.title}</div>
-            <div className="home-nextevent-date">{formatDayDE(nextEvent.day)}</div>
+            <div className="home-nextevent-title">Nächstes Event</div>
+            <div className="home-nextevent-infos">
+              <div className="home-nextevent-date">{formatDayDE(nextEvent.day)}</div>
+              <div className="home-nextevent-name">{nextEvent.title}</div>
+            </div>
           </div>
+          </>
         ) : (
           <div style={{ opacity: 0.7 }}>No upcoming events.</div>
         )}
@@ -55,5 +64,6 @@ export default function App() {
         </NavLink>
       </div>
     </div>
+    </>
   );
 }

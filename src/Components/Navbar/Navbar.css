@@ -1,17 +1,24 @@
 .navbar-container {
+  display: flex;
+  align-items: center;
+}
+.cg-logo-link {
+  margin-left: auto;
+  margin-top: -20px;
+  margin-right: 10px;
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+}
 
-  /* optional: background so it’s readable */
-  background: white;
-  border: 1px solid rgba(0,0,0,0.1);
-  border-radius: 12px;
-  padding: 8px 10px;
+.cg-logo {
+  width: 150px;
+  height: auto;
+  display: block;
 }
 
 .navbar {
   display: flex;
+  width: 100%;
   gap: 12px;
   align-items: center;
   margin-bottom: 5vh;

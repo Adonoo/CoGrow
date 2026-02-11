@@ -1,18 +1,7 @@
 import { useRef } from "react";
 import "./BudPlacer.css";
 
-/**
- * BudPlacer
- * - Shows the current plant image (plantSrc)
- * - Overlays all event buds at their saved x/y (0..1)
- * - Clicking places the bud for selectedEventId (calls onPlace)
- *
- * Props:
- * - plantSrc: string (image url from import)
- * - events: array of events (each event has bud: {x,y})
- * - selectedEventId: string|null
- * - onPlace: (eventId, x01, y01) => void
- */
+
 export function BudPlacer({ plantSrc, events, selectedEventId, onPlace }) {
   const frameRef = useRef(null);
 
@@ -58,7 +47,7 @@ export function BudPlacer({ plantSrc, events, selectedEventId, onPlace }) {
 
       <div className="placer__hint">
         {selectedEventId
-          ? "Click on the plant to place the selected event’s bud."
+          ? "Click on the plant to place the selected event's bud."
           : "Select an event first, then click on the plant to place its bud."}
       </div>
     </div>

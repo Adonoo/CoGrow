@@ -1,31 +1,47 @@
-import { createId } from "./ids.js";
+function id() {
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+function randomBudStyle() {
+  const n = 1 + Math.floor(Math.random() * 4);
+  return `v${n}`;
+}
+
+function randomRotation() {
+  return Math.floor(Math.random() * 360);
+}
 
 export function createEvent(title, day) {
   return {
-    id: createId(),
-    title: title.trim(),
-    day: day, // "YYYY-MM-DD"
-    bud: { x: Math.random(), y: Math.random(), style: "default" },
+    id: id(),
+    title,
+    day,
+    bud: {
+      x: Math.random(),
+      y: Math.random(),
+      style: randomBudStyle(),
+      rot: randomRotation(),
+    },
     todos: [],
   };
 }
 
 export function createTodo(text) {
   return {
-    id: createId(),
-    text: text.trim(),
+    id: id(),
+    text,
     done: false,
     weight: 1,
     notes: "",
-    dueDay: null, // "YYYY-MM-DD" or null
+    dueDay: null,
     subtasks: [],
   };
 }
 
 export function createSubtask(text) {
   return {
-    id: createId(),
-    text: text.trim(),
+    id: id(),
+    text,
     done: false,
   };
 }

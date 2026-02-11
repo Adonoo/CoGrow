@@ -11,7 +11,7 @@
  *   subtasks: Subtask[]
  * }} Todo
  *
- * @typedef {{ x: number, y: number, style: string }} Bud
+ * @typedef {{ x: number, y: number, style: string, rot: number }} Bud
  *
  * @typedef {{
  *   id: string,
