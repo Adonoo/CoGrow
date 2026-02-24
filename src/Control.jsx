@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useAppState } from "./state/AppStateContext.jsx";
 import { ToDoList } from "./Components/ToDo/ToDoList.jsx";
-import { EventList } from "./Components/Event/EventList.jsx";
+import { EventList } from "./Components/Event/Eventlist.jsx";
 import { Navbar } from "./Components/Navbar/Navbar.jsx";
 import { DebugJSON } from "./JSON.jsx";
 import { StageSlider } from "./Components/StageSlider/StageSlider.jsx";
